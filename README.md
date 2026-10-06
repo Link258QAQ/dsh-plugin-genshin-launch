@@ -38,14 +38,18 @@
 
 ## 安装
 
-```powershell
-dsh plugin --profile web add "link:D:\path\to\dsh-plugin-genshin-launch"
-```
-
-或者直接从 GitHub 装：
+从 GitHub 直接装（推荐，可固定版本）：
 
 ```powershell
 dsh plugin --profile web add github:Link258QAQ/dsh-plugin-genshin-launch
+# 固定到某个 tag：
+dsh plugin --profile web add github:Link258QAQ/dsh-plugin-genshin-launch#v0.2.0
+```
+
+本地开发用 `link:`：
+
+```powershell
+dsh plugin --profile web add "link:D:\path\to\dsh-plugin-genshin-launch"
 ```
 
 装完**下一次 `dsh --profile web` 启动时自动跑一遍**。
@@ -58,6 +62,7 @@ dsh plugin --profile web remove dsh-plugin-genshin-launch
 
 > 插件 ID 是 `genshin-launch`，包名 `dsh-plugin-genshin-launch`。
 > 用 `link:` 安装时，改本目录的代码下次启动就生效，不用重装。
+> 也可以在 DSH Market 里搜 `dsh-plugin-genshin-launch`（收录审核通过后可见）。
 
 ### 装之前请注意
 
