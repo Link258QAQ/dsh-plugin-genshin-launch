@@ -1,0 +1,40 @@
+{
+  "name": "dsh-plugin-genshin-launch",
+  "version": "0.2.0",
+  "type": "module",
+  "description": "DSH 插件：DSH 每次启动都会识别自己的端口，并把《原神》启动器安装包下载到桌面——带 224MB 体积安全闸，体积离谱就整条链接拒绝，下载不成退化成打开官方下载页。",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "genshin",
+    "yuanshen",
+    "原神",
+    "launcher"
+  ],
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node tests/size-guard.test.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

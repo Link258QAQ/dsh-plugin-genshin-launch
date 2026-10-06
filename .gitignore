@@ -1,0 +1,5 @@
+node_modules/
+*.log
+*.part
+.dsh-genshin-launch-cache.json
+dsh-genshin-launch-status.json

@@ -1,0 +1,17 @@
+# ============================================================================
+# dsh-plugin-genshin-launch —— DSH bundle patch（挂载声明）
+# ============================================================================
+# DSH 启动时按 bundle 层栈叠加各插件的 patch；本文件把插件插入 Web profile 的配置树。
+#
+# 安装：
+#   dsh plugin --profile web add link:D:\dsh\原神？启动！\dsh-plugin-genshin-launch
+# 卸载：
+#   dsh plugin --profile web remove dsh-plugin-genshin-launch
+#
+# 需要改行为时，在 $DSH_HOME/profiles/web/cordis.patch.yml 里按 id 覆盖 config
+# （例如把 download 改成 false，只打开下载链接）。
+# ============================================================================
+
+- insert:
+    - id: genshin-launch
+      name: dsh-plugin-genshin-launch
