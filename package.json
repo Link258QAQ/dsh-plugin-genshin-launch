@@ -1,7 +1,15 @@
 {
   "name": "dsh-plugin-genshin-launch",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Link258QAQ/dsh-plugin-genshin-launch.git"
+  },
+  "homepage": "https://github.com/Link258QAQ/dsh-plugin-genshin-launch#readme",
+  "bugs": {
+    "url": "https://github.com/Link258QAQ/dsh-plugin-genshin-launch/issues"
+  },
   "description": "DSH 插件：DSH 每次启动都会识别自己的端口，并把《原神》启动器安装包下载到桌面——带 224MB 体积安全闸，体积离谱就整条链接拒绝，下载不成退化成打开官方下载页。",
   "keywords": [
     "dsh",
