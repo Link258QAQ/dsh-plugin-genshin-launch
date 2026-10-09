@@ -1,5 +1,17 @@
 node_modules/
 *.log
 *.part
+
+# 运行态：这些是插件在用户机器上落盘的东西，绝不进仓库（里面可能有路径/密文）。
+# 兜底状态目录（%LOCALAPPDATA% 不可写时才落在工作区）。
+dsh-genshin-launch-state/
+# 老版本散落在仓库/桌面的一整套派生文件，一并挡在版本控制外。
+dsh-genshin-launch-*.json
 .dsh-genshin-launch-cache.json
+dsh-genshin-launch-config.json
 dsh-genshin-launch-status.json
+dsh-genshin-launch-detect.json
+dsh-genshin-launch-session.json
+dsh-genshin-launch-installer-cache.json
+# 独立窗口的一次性脚本（带端口/token，用完即删，不留档）。
+assets/standalone-window-*.ps1
