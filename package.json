@@ -1,6 +1,6 @@
 {
   "name": "dsh-plugin-genshin-launch",
-  "version": "0.2.1",
+  "version": "0.4.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -10,7 +10,7 @@
   "bugs": {
     "url": "https://github.com/Link258QAQ/dsh-plugin-genshin-launch/issues"
   },
-  "description": "DSH 插件：DSH 每次启动都会识别自己的端口，并把《原神》启动器安装包下载到桌面——带 224MB 体积安全闸，体积离谱就整条链接拒绝，下载不成退化成打开官方下载页。",
+  "description": "DSH 插件：打开 DSH 时先零配置探测本机有没有装《原神》——装了就直接启动游戏本体（起不来自动改起米哈游启动器），没装就把启动器安装包下载到桌面（带 224MB 体积安全闸，下载不成退化成打开官方下载页）。",
   "keywords": [
     "dsh",
     "dsh-plugin",
@@ -23,22 +23,37 @@
   "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js",
-    "./client": "./lib/client.js",
+    "./client": "./client/index.js",
+    "./detect": "./lib/detect.js",
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json"
   },
   "files": [
     "lib",
+    "client",
+    "assets",
+    "tools",
     "cordis.patch.yml",
     "README.md",
     "LICENSE"
   ],
+  "bin": {
+    "dsh-genshin-selfcheck": "./tools/selfcheck.mjs"
+  },
   "scripts": {
-    "test": "node tests/size-guard.test.mjs"
+    "test": "node tests/size-guard.test.mjs && node tests/store.test.mjs && node tests/privacy.test.mjs && node tests/detect.test.mjs",
+    "smoke": "node tests/apply.smoke.mjs",
+    "selfcheck": "node tools/selfcheck.mjs"
   },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "slots"
+      ]
     }
   },
   "engines": {
