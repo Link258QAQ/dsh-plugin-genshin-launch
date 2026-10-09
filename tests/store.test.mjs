@@ -69,13 +69,13 @@ try {
   // 老版本（v1）明文文件：打开时自动迁移，scanFoundExe 并进 gameExe，明文路径被加密重写。
   writeFileSync(
     file,
-    JSON.stringify({ gamePath: 'D:\\games\\yuanshen', scanConsent: 'denied', scanDone: true, scanFoundExe: '', sizeBaselineBytes: 234381736 }),
+    JSON.stringify({ gamePath: 'D:\\games\\Genshin Impact', scanConsent: 'denied', scanDone: true, scanFoundExe: '', sizeBaselineBytes: 234381736 }),
     'utf8',
   )
   const migrated = openStore(file)
   assert.equal(migrated.get().scanConsent, 'denied')
   assert.equal(migrated.get().sizeBaselineBytes, 234381736)
-  assert.equal(migrated.get().gamePath, 'D:\\games\\yuanshen')
+  assert.equal(migrated.get().gamePath, 'D:\\games\\Genshin Impact')
   const afterMigrate = JSON.parse(readFileSync(file, 'utf8'))
   assert.equal(afterMigrate.version, 2, 'v1 文件应被升级成 v2')
   assert.equal(afterMigrate.gameExe, undefined, '迁移后明文 gameExe 不该残留')

@@ -6,15 +6,20 @@
 // 覆盖：状态/配置路由、一次性 token、同源与回环校验、**副作用门控**（UI 没出现前绝不动手）、
 //       **F5 幂等**（重复上报不会开第二个游戏进程）、启动成功与秒退两条路、状态文件落盘。
 //
-// 注意：会真的把靶子程序启动一次（默认是那个小游戏），跑完自动把它收掉。
+// 注意：会真的把靶子程序启动一次（默认是系统记事本，任何 Windows 上都在），跑完自动把它收掉。
 import assert from 'node:assert/strict'
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 
 import { apply } from '../lib/index.js'
 
-const TARGET = process.argv[2] ?? 'D:\\games\\Shawarma\\Shawarma Legend.exe'
+// 默认靶子用系统自带的记事本——任何 Windows 上都在，且打开后不会自己秒退，
+// 适合验证「启动成功」这条路。不写死任何个人机器上的路径（隐私）。
+const SYSTEM_ROOT = process.env.SystemRoot || 'C:\\Windows'
+const TARGET = process.argv[2] ?? join(SYSTEM_ROOT, 'System32', 'notepad.exe')
+const targetBase = basename(TARGET)
+const targetParent = basename(dirname(TARGET))
 if (!existsSync(TARGET)) {
   console.error(`靶子程序不存在：${TARGET}`)
   console.error('用法：node tests/apply.smoke.mjs [某个会自己保持运行的 exe]')
@@ -189,8 +194,8 @@ const detected = await waitForPhase(['game-found', 'game-missing', 'installing']
 assert.equal(detected.game.found, true, '用 gameExe 指定了靶子，应该判定为「找到」')
 // 隐私：状态/面板里只回显掩码路径（C:\…\末段），完整路径不进 JSON。
 assert.match(detected.game.exePath, /^[A-Za-z]:\\…\\/, `界面上的 exePath 应是掩码形式，实际：${detected.game.exePath}`)
-assert.ok(!detected.game.exePath.includes('games'), '掩码结果不该保留中间目录（只留盘符 + 末段文件名）')
-assert.ok(detected.game.exePath.endsWith('Shawarma Legend.exe'), '掩码要保留末段文件名')
+assert.ok(!detected.game.exePath.includes(targetParent), '掩码结果不该保留中间目录（只留盘符 + 末段文件名）')
+assert.ok(detected.game.exePath.endsWith(targetBase), '掩码要保留末段文件名')
 console.log(`✓ 探测到目标（掩码显示）：${detected.game.exePath}（来源 ${detected.game.source}）`)
 
 // —— 关键：UI 还没出现之前，绝不能有任何副作用 ——
@@ -325,7 +330,7 @@ assert.equal(onDiskConfig.gameExe, undefined, '明文 gameExe 字段不该落盘
 assert.ok(typeof onDiskConfig.secrets === 'string' && onDiskConfig.secrets.length > 0, '路径应存进 secrets')
 assert.ok(['dpapi', 'plain'].includes(onDiskConfig.encryption))
 if (onDiskConfig.encryption === 'dpapi') {
-  assert.ok(!JSON.stringify(onDiskConfig).includes('Shawarma'), '加密模式下整个盘上文件不该能搜到靶子名')
+  assert.ok(!JSON.stringify(onDiskConfig).includes(targetBase), '加密模式下整个盘上文件不该能搜到靶子名')
 }
 console.log(`✓ /config：旧 token 失效、坏路径被拒、好路径写盘生效（落盘 v2，存储方式 ${onDiskConfig.encryption}）`)
 
@@ -341,7 +346,7 @@ const statusFile = join(stateDir, 'dsh-genshin-launch-status.json')
 assert.ok(existsSync(statusFile))
 const onDisk = JSON.parse(readFileSync(statusFile, 'utf8'))
 // 隐私：整份状态文件搜不到完整路径——所有路径字段都是掩码形式。
-assert.ok(!JSON.stringify(onDisk).includes('Shawarma\\Shawarma Legend.exe'), '状态文件里不该出现完整靶子路径')
+assert.ok(!JSON.stringify(onDisk).includes(JSON.stringify(TARGET).slice(1, -1)), '状态文件里不该出现完整靶子路径')
 assert.match(onDisk.game.exePath, /^[A-Za-z]:\\…\\/, '状态文件里的 exePath 是掩码的')
 assert.match(onDisk.stateDir, /^[A-Za-z]:\\…\\/, '状态文件里的 stateDir 也是掩码的')
 // 注意：这里是**热重载之后那个实例**写的状态。它收到了 /hello、经历了一次启动流程，

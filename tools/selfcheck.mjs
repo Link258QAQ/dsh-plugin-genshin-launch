@@ -8,7 +8,7 @@
 //   node tools/selfcheck.mjs --exe "D:\youxi\Genshin Impact\Genshin Impact Game\YuanShen.exe"
 //       指定 exe 再探测（最高优先级那一档）。
 //
-//   node tools/selfcheck.mjs --exe "D:\games\Shawarma\Shawarma Legend.exe" --launch
+//   node tools/selfcheck.mjs --exe "C:\Windows\System32\notepad.exe" --launch
 //       连启动一起验证 —— 拿一个随便什么程序当靶子，确认「启动」这一环是通的。
 //
 //   node tools/selfcheck.mjs --no-scan
