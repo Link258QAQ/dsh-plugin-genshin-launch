@@ -10,6 +10,9 @@
 
 > DSH 插件：打开 DSH 时零配置探测本机《原神》，装了就直接启动游戏本体（起不来自动改起米哈游启动器），没装就下载启动器安装包到桌面。
 
+> **平台：仅 Windows。** 探测走注册表（HoYoPlay `HYP` 树）、`reg.exe` 输出按 `chcp 65001` 校准、配置用 DPAPI 加密、
+> 提权回退依赖 UAC 与 `shell` 关联——这些机制在 macOS / Linux 上不存在，插件在非 Windows 上不适用。
+
 ```
 ╔══════════════════════════════════════════════════════════╗
 ║  原神，启动！                                            ║
@@ -44,7 +47,7 @@
 
 - **端口识别**：注入宿主 `webServer` 服务读 `host/port`，`--port 0` 由系统分配端口也能拿到；`DSH_WEB_URL` 兜底。
 - **自动找最新版**：候选直链可用时，还会在同一版本目录里向上探测更新的 `pcbackup` 序号（实测 319 → 320）。
-- **体积安全闸**：启动器安装包约 224 MiB。凡是体积与预期**相差超过 50 MiB** 的链接——不管它来自候选、缓存还是探测——都会被**整条拒绝**：不下载、不续传，连已经下了一半的 `.part` 一起删掉。体积拿不到也默认拒绝。
+- **体积安全闸**：启动器安装包约 224 MiB。凡是体积与预期**相差超过 15 MiB**（默认值，可用 `sizeToleranceBytes` 调）的链接——不管它来自候选、缓存还是探测——都会被**整条拒绝**：不下载、不续传，连已经下了一半的 `.part` 一起删掉。体积拿不到也默认拒绝。
 - **断点续传 / 落盘后复检 / 优雅退化 / 零依赖**：同 v0.2。
 
 ---
@@ -228,7 +231,7 @@ node tools/selfcheck.mjs --no-mask
 | `probeLatest` / `probeStart` / `probeAhead` | `true` / `0` / `1` | `pcbackup` 序号向上探测 |
 | `resume` | `true` | 断点续传 |
 | **`expectedInstallerBytes`** | **224 MiB** | **体积安全闸的预期值** |
-| **`sizeToleranceBytes`** | **50 MiB** | **允许的体积偏差；超出 → 整条链接拒绝** |
+| **`sizeToleranceBytes`** | **15 MiB** | **允许的体积偏差；超出 → 整条链接拒绝** |
 | `minInstallerBytes` / `maxInstallerBytes` | `0`（自动推导） | 想直接指定上下限就填这里 |
 | `allowUnknownSize` | `false` | 服务端不给 `Content-Length` 时是否放行 |
 | `openFileWhenDone` | `false` | 下载完打开文件所在目录 |
@@ -344,7 +347,7 @@ dsh-plugin-genshin-launch/
 │   ├── registry.js      # 只读注册表：编码处理、解析、批量查询
 │   ├── launch.js        # 启动通道：spawn / shell、观察窗、进程轮询、环境变量脱敏
 │   ├── download.js      # 下载器：Range 续传、进度、大小校验（方案一）
-│   ├── size-guard.js    # 体积安全闸：224MB ± 50MB，越界整条拒绝（方案一）
+│   ├── size-guard.js    # 体积安全闸：224MB ± 15MB，越界整条拒绝（方案一）
 │   ├── resolve.js       # 链接解析：候选校验 + pcbackup 向上探测 + 缓存（方案一）
 │   ├── exec.js          # 子进程执行 + 文件式输出捕获（避开沙箱的管道限制）
 │   ├── store.js         # 配置持久化：v2 格式，路径进 DPAPI 加密 secrets，v1 明文自动迁移
